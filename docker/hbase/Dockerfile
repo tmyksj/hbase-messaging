@@ -5,11 +5,7 @@ RUN apt-get update
 RUN apt-get upgrade -y
 
 
-RUN ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa
-RUN cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
-RUN chmod 0600 ~/.ssh/authorized_keys
-RUN sed -i 's/#   StrictHostKeyChecking ask/    StrictHostKeyChecking no/g' /etc/ssh/ssh_config
-RUN service ssh restart
+RUN apt-get install -y curl
 
 
 RUN apt-get install -y openjdk-8-jdk
@@ -30,10 +26,8 @@ COPY etc/start.sh ${HBASE_HOME}/etc/start.sh
 RUN chmod 755 ${HBASE_HOME}/etc/start.sh
 
 
-EXPOSE 16010 16020 16030
-EXPOSE 16012 16022 16032 16013 16023 16033 16015 16025 16035
-EXPOSE 16200 16300
-EXPOSE 16202 16302
+EXPOSE 16010 16012 16013 16015 16020 16022 16023 16025 16030 16032 16033 16035
+EXPOSE 16200 16202 16300 16302
 
 
 ENTRYPOINT ["bash", "-c", "${HBASE_HOME}/etc/start.sh"]
