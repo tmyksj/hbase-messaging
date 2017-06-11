@@ -2,7 +2,16 @@ version: '3'
 
 services:
   hadoop:
-    build: ./hadoop
+    build:
+      context: .
+      dockerfile: dockerfile-hadoop
+      args:
+        authorized_keys: .ssh/authorized_keys
+        config: .ssh/config
+        id_rsa: .ssh/hadoop.id_rsa
+        id_rsa_pub: .ssh/hadoop.id_rsa.pub
+    expose:
+      - '22'
     ports:
       - '8020:8020'
       - '9000:9000'
@@ -24,7 +33,16 @@ services:
       - '2122:2122'
       
   hbase:
-    build: ./hbase
+    build:
+      context: .
+      dockerfile: dockerfile-hbase
+      args:
+        authorized_keys: .ssh/authorized_keys
+        config: .ssh/config
+        id_rsa: .ssh/hbase.id_rsa
+        id_rsa_pub: .ssh/hbase.id_rsa.pub
+    expose:
+      - '22'
     ports:
       - '16010:16010'
       - '16012:16012'
