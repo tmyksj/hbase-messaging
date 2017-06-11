@@ -5,7 +5,19 @@ RUN apt-get update
 RUN apt-get upgrade -y
 
 
-RUN apt-get install -y curl
+RUN apt-get install -y curl openssh-server pdsh
+
+
+ARG authorized_keys
+ARG config
+ARG id_rsa
+ARG id_rsa_pub
+
+COPY ${authorized_keys} ~/.ssh/authorized_keys
+COPY ${config} ~/.ssh/config
+COPY ${id_rsa} ~/.ssh/id_rsa
+COPY ${id_rsa_pub} ~/.ssh/id_rsa.pub
+RUN service ssh restart
 
 
 RUN apt-get install -y openjdk-8-jdk
@@ -19,16 +31,14 @@ ENV PATH ${PATH}:${HBASE_HOME}/bin:${HBASE_HOME}/sbin
 
 RUN sed -i 's!^# export JAVA_HOME=/usr/java/jdk1.6.0/$!export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64!g' ${HBASE_HOME}/conf/hbase-env.sh
 
-COPY conf/hbase-site.xml ${HBASE_HOME}/conf/hbase-site.xml
+COPY hbase/hbase-site.xml ${HBASE_HOME}/conf/hbase-site.xml
 
-RUN mkdir ${HBASE_HOME}/etc
-COPY etc/start.sh ${HBASE_HOME}/etc/start.sh
-RUN chmod 755 ${HBASE_HOME}/etc/start.sh
+
+COPY hbase/docker-entrypoint.sh /usr/local/bin/
+ENTRYPOINT ["docker-entrypoint.sh"]
 
 
 EXPOSE 16010 16012 16013 16015 16020 16022 16023 16025 16030 16032 16033 16035
 EXPOSE 16200 16202 16300 16302
-
-
-ENTRYPOINT ["bash", "-c", "${HBASE_HOME}/etc/start.sh"]
+EXPOSE 22
 
