@@ -13,10 +13,17 @@ ARG config
 ARG id_rsa
 ARG id_rsa_pub
 
-COPY ${authorized_keys} ~/.ssh/authorized_keys
-COPY ${config} ~/.ssh/config
-COPY ${id_rsa} ~/.ssh/id_rsa
-COPY ${id_rsa_pub} ~/.ssh/id_rsa.pub
+COPY ${authorized_keys} /root/.ssh/authorized_keys
+COPY ${config} /root/.ssh/config
+COPY ${id_rsa} /root/.ssh/id_rsa
+COPY ${id_rsa_pub} /root/.ssh/id_rsa.pub
+
+RUN chmod 700 /root/.ssh
+RUN chmod 600 /root/.ssh/authorized_keys
+RUN chmod 600 /root/.ssh/config
+RUN chmod 600 /root/.ssh/id_rsa
+RUN chmod 644 /root/.ssh/id_rsa.pub
+
 RUN service ssh restart
 
 
