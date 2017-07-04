@@ -1,4 +1,4 @@
-package com.example.hbase_messaging.config;
+package com.example.hbase_messaging.configuration;
 
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,7 +8,7 @@ import org.springframework.data.hadoop.hbase.HbaseConfigurationFactoryBean;
 import org.springframework.data.hadoop.hbase.HbaseTemplate;
 
 @Configuration
-public class HbaseConfig {
+public class HbaseConfiguration {
 
     @Value("${hbase.zk.quorum}")
     private String zkQuorum;
