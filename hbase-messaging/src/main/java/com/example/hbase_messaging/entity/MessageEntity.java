@@ -9,5 +9,5 @@ public class MessageEntity {
     private String from;
     private String to;
     private String message;
-    private Long timestamp;
+    private long timestamp;
 }

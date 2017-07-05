@@ -20,7 +20,7 @@ public class HbaseConfiguration {
             @Qualifier("hadoop") org.apache.hadoop.conf.Configuration hadoopConfiguration) {
         org.apache.hadoop.conf.Configuration configuration =
                 new org.apache.hadoop.conf.Configuration(hadoopConfiguration);
-        configuration.set("hbase.zookeeper.quorum", zkQuorum);
+        configuration.set("hbase.zookeeper.quorum", zkQuorum.trim());
         configuration.set("hbase.zookeeper.port", String.valueOf(zkPort));
         return configuration;
     }
