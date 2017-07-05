@@ -1,36 +1,33 @@
 package com.example.hbase_messaging.configuration;
 
-import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.hadoop.hbase.HbaseConfigurationFactoryBean;
 import org.springframework.data.hadoop.hbase.HbaseTemplate;
 
 @Configuration
 public class HbaseConfiguration {
 
-    @Value("${hbase.zk.quorum}")
+    @Value("${hbase.zookeeper.quorum}")
     private String zkQuorum;
 
-    @Value("${hbase.zk.port}")
+    @Value("${hbase.zookeeper.port}")
     private int zkPort;
 
-    @Bean
-    public HbaseConfigurationFactoryBean hbaseConfigurationFactoryBean() {
-        HbaseConfigurationFactoryBean config = new HbaseConfigurationFactoryBean();
-        config.setZkQuorum(zkQuorum);
-        config.setZkPort(zkPort);
-        return config;
+    @Bean(name = "hbase")
+    public org.apache.hadoop.conf.Configuration hbaseConfiguration(
+            @Qualifier("hadoop") org.apache.hadoop.conf.Configuration hadoopConfiguration) {
+        org.apache.hadoop.conf.Configuration configuration =
+                new org.apache.hadoop.conf.Configuration(hadoopConfiguration);
+        configuration.set("hbase.zookeeper.quorum", zkQuorum);
+        configuration.set("hbase.zookeeper.port", String.valueOf(zkPort));
+        return configuration;
     }
 
     @Bean
-    public org.apache.hadoop.conf.Configuration configuration() {
-        return HBaseConfiguration.create();
-    }
-
-    @Bean
-    public HbaseTemplate hbaseTemplate(org.apache.hadoop.conf.Configuration configuration) {
+    public HbaseTemplate hbaseTemplate(
+            @Qualifier("hbase") org.apache.hadoop.conf.Configuration configuration) {
         return new HbaseTemplate(configuration);
     }
 
