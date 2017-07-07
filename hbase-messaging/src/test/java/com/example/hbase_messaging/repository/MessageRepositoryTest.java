@@ -37,6 +37,11 @@ public class MessageRepositoryTest {
             assertThat(messageEntityList.get(i).getTo(), is(to));
             assertThat(messageEntityList.get(i).getMessage(), is(message));
             assertThat(messageEntityList.get(i).getTimestamp(), is(greaterThan(0L)));
+
+            if (i > 0) {
+                assertThat(messageEntityList.get(i).getTimestamp(),
+                        is(lessThanOrEqualTo(messageEntityList.get(i - 1).getTimestamp())));
+            }
         }
     }
 
@@ -57,6 +62,11 @@ public class MessageRepositoryTest {
             assertThat(messageEntityList.get(i).getFrom(), is(from));
             assertThat(messageEntityList.get(i).getMessage(), is(message));
             assertThat(messageEntityList.get(i).getTimestamp(), is(greaterThan(0L)));
+
+            if (i > 0) {
+                assertThat(messageEntityList.get(i).getTimestamp(),
+                        is(lessThanOrEqualTo(messageEntityList.get(i - 1).getTimestamp())));
+            }
         }
     }
 
