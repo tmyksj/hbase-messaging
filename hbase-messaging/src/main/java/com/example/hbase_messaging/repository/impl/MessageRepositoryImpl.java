@@ -7,7 +7,10 @@ import org.apache.hadoop.hbase.CellUtil;
 import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.HTableDescriptor;
 import org.apache.hadoop.hbase.TableName;
-import org.apache.hadoop.hbase.client.*;
+import org.apache.hadoop.hbase.client.ConnectionFactory;
+import org.apache.hadoop.hbase.client.HBaseAdmin;
+import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -67,12 +70,12 @@ public class MessageRepositoryImpl implements MessageRepository {
 
         List<List<MessageEntity>> entityList = hbaseTemplate.find(TABLE_NAME, scan, (result, rowNum) ->
                 result.listCells().stream().map(cell -> {
-                        MessageEntity entity = new MessageEntity();
-                        entity.setFrom(userIdFrom);
-                        entity.setTo(userIdTo);
-                        entity.setMessage(Bytes.toString(CellUtil.cloneValue(cell)));
-                        entity.setTimestamp(cell.getTimestamp());
-                        return entity;
+                    MessageEntity entity = new MessageEntity();
+                    entity.setFrom(userIdFrom);
+                    entity.setTo(userIdTo);
+                    entity.setMessage(Bytes.toString(CellUtil.cloneValue(cell)));
+                    entity.setTimestamp(cell.getTimestamp());
+                    return entity;
                 }).collect(Collectors.toList()));
 
         return entityList.size() == 1 ? entityList.get(0) : Collections.emptyList();
@@ -85,18 +88,18 @@ public class MessageRepositoryImpl implements MessageRepository {
         }
 
         return hbaseTemplate.execute(TABLE_NAME, table -> {
-                MessageEntity entity = new MessageEntity();
-                entity.setFrom(userIdFrom);
-                entity.setTo(userIdTo);
-                entity.setMessage(message);
+            MessageEntity entity = new MessageEntity();
+            entity.setFrom(userIdFrom);
+            entity.setTo(userIdTo);
+            entity.setMessage(message);
 
-                Put put = new Put(Bytes.toBytes(userIdFrom + DESCRIPTOR + userIdTo));
-                put.addColumn(FAMILY, QUALIFIER, Bytes.toBytes(message));
-                table.put(put);
+            Put put = new Put(Bytes.toBytes(userIdFrom + DESCRIPTOR + userIdTo));
+            put.addColumn(FAMILY, QUALIFIER, Bytes.toBytes(message));
+            table.put(put);
 
-                entity.setTimestamp(put.getTimeStamp());
+            entity.setTimestamp(put.getTimeStamp());
 
-                return entity;
+            return entity;
         });
     }
 }
