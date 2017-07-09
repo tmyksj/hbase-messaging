@@ -5,7 +5,6 @@ import com.example.hbase_messaging.entity.MessageEntity;
 import java.util.List;
 
 public interface MessageRepository {
-    List<MessageEntity> getInbox(String userId);
-    List<MessageEntity> getOutbox(String userId);
+    List<MessageEntity> get(String userIdFrom, String userIdTo);
     MessageEntity post(String userIdFrom, String userIdTo, String message);
 }
