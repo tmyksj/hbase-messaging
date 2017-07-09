@@ -21,46 +21,23 @@ public class MessageRepositoryTest {
     private MessageRepository messageRepository;
 
     @Test
-    public void getInbox() {
+    public void get() {
         int size = 10;
+        String from = UUID.randomUUID().toString();
         String to = UUID.randomUUID().toString();
         String message = "message";
 
         for (int i = 0; i < size; i++) {
-            messageRepository.post(UUID.randomUUID().toString(), to, message);
+            messageRepository.post(from, to, message + i);
         }
 
-        List<MessageEntity> messageEntityList = messageRepository.getInbox(to);
-        assertThat(messageEntityList.size(), is(size));
-
-        for (int i = 0; i < size; i++) {
-            assertThat(messageEntityList.get(i).getTo(), is(to));
-            assertThat(messageEntityList.get(i).getMessage(), is(message));
-            assertThat(messageEntityList.get(i).getTimestamp(), is(greaterThan(0L)));
-
-            if (i > 0) {
-                assertThat(messageEntityList.get(i).getTimestamp(),
-                        is(lessThanOrEqualTo(messageEntityList.get(i - 1).getTimestamp())));
-            }
-        }
-    }
-
-    @Test
-    public void getOutbox() {
-        int size = 10;
-        String from = UUID.randomUUID().toString();
-        String message = "message";
-
-        for (int i = 0; i < size; i++) {
-            messageRepository.post(from, UUID.randomUUID().toString(), message);
-        }
-
-        List<MessageEntity> messageEntityList = messageRepository.getOutbox(from);
+        List<MessageEntity> messageEntityList = messageRepository.get(from, to);
         assertThat(messageEntityList.size(), is(size));
 
         for (int i = 0; i < size; i++) {
             assertThat(messageEntityList.get(i).getFrom(), is(from));
-            assertThat(messageEntityList.get(i).getMessage(), is(message));
+            assertThat(messageEntityList.get(i).getTo(), is(to));
+            assertThat(messageEntityList.get(i).getMessage(), is(message + (size - i - 1)));
             assertThat(messageEntityList.get(i).getTimestamp(), is(greaterThan(0L)));
 
             if (i > 0) {
