@@ -3,10 +3,7 @@ package com.example.hbase_messaging.repository.impl;
 import com.example.hbase_messaging.entity.MessageEntity;
 import com.example.hbase_messaging.repository.MessageRepository;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hbase.CellUtil;
-import org.apache.hadoop.hbase.HColumnDescriptor;
-import org.apache.hadoop.hbase.HTableDescriptor;
-import org.apache.hadoop.hbase.TableName;
+import org.apache.hadoop.hbase.*;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.HBaseAdmin;
 import org.apache.hadoop.hbase.client.Put;
@@ -87,16 +84,17 @@ public class MessageRepositoryImpl implements MessageRepository {
         }
 
         return hbaseTemplate.execute(TABLE_NAME, table -> {
+            long timestamp = System.currentTimeMillis();
+
+            Put put = new Put(Bytes.toBytes(userIdFrom + DESCRIPTOR + userIdTo));
+            put.addColumn(FAMILY, QUALIFIER, timestamp, Bytes.toBytes(message));
+            table.put(put);
+
             MessageEntity entity = new MessageEntity();
             entity.setFrom(userIdFrom);
             entity.setTo(userIdTo);
             entity.setMessage(message);
-
-            Put put = new Put(Bytes.toBytes(userIdFrom + DESCRIPTOR + userIdTo));
-            put.addColumn(FAMILY, QUALIFIER, Bytes.toBytes(message));
-            table.put(put);
-
-            entity.setTimestamp(put.getTimeStamp());
+            entity.setTimestamp(timestamp);
 
             return entity;
         });
