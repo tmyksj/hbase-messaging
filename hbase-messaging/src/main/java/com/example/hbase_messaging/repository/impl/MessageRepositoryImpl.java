@@ -87,16 +87,17 @@ public class MessageRepositoryImpl implements MessageRepository {
         }
 
         return hbaseTemplate.execute(TABLE_NAME, table -> {
+            long timestamp = System.currentTimeMillis();
+
+            Put put = new Put(Bytes.toBytes(userIdFrom + DESCRIPTOR + userIdTo));
+            put.addColumn(FAMILY, QUALIFIER, timestamp, Bytes.toBytes(message));
+            table.put(put);
+
             MessageEntity entity = new MessageEntity();
             entity.setFrom(userIdFrom);
             entity.setTo(userIdTo);
             entity.setMessage(message);
-
-            Put put = new Put(Bytes.toBytes(userIdFrom + DESCRIPTOR + userIdTo));
-            put.addColumn(FAMILY, QUALIFIER, Bytes.toBytes(message));
-            table.put(put);
-
-            entity.setTimestamp(put.getTimeStamp());
+            entity.setTimestamp(timestamp);
 
             return entity;
         });
