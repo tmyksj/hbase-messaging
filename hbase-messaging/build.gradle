@@ -24,6 +24,7 @@ repositories {
 
 dependencies {
     compile('org.springframework.boot:spring-boot-starter-web')
+    compile('org.springframework.boot:spring-boot-starter-tomcat')
     compile('org.springframework.data:spring-data-hadoop:2.4.0.RELEASE')
     compile('org.apache.hadoop:hadoop-common:2.7.3') {
         exclude(group: 'log4j', module: 'log4j')
