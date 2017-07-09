@@ -30,8 +30,7 @@ public class MessageRepositoryImpl implements MessageRepository {
     private static final byte[] FAMILY = Bytes.toBytes("f");
     private static final byte[] QUALIFIER = Bytes.toBytes("q");
 
-    private static final int MAX_VERSIONS = 8192;
-    private static final int MAX_VERSIONS_PER_QUERY = 64;
+    private static final int MAX_VERSIONS = 65536;
 
     private HbaseTemplate hbaseTemplate;
     private HBaseAdmin admin;
@@ -66,7 +65,7 @@ public class MessageRepositoryImpl implements MessageRepository {
                 .setStartRow(row)
                 .setStopRow(row)
                 .addColumn(FAMILY, QUALIFIER)
-                .setMaxVersions(MAX_VERSIONS_PER_QUERY);
+                .setMaxVersions(MAX_VERSIONS);
 
         List<List<MessageEntity>> entityList = hbaseTemplate.find(TABLE_NAME, scan, (result, rowNum) ->
                 result.listCells().stream().map(cell -> {
