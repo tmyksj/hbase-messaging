@@ -59,5 +59,6 @@ public class MessageRepositoryTest {
         assertThat(entity.getTo(), is(to));
         assertThat(entity.getMessage(), is(message));
         assertThat(entity.getTimestamp(), is(greaterThan(0L)));
+        assertThat(entity.getTimestamp(), is(lessThanOrEqualTo(System.currentTimeMillis())));
     }
 }
