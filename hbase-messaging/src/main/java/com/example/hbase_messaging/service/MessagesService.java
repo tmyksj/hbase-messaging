@@ -7,5 +7,6 @@ import com.example.hbase_messaging.response.messages.PostMessageResponse;
 
 public interface MessagesService {
     GetMessagesResponse get(GetMessagesRequest request);
+
     PostMessageResponse post(PostMessageRequest request);
 }
