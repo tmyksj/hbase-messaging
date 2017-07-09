@@ -1,13 +1,13 @@
 buildscript {
-	ext {
-		springBootVersion = '1.5.4.RELEASE'
-	}
-	repositories {
-		mavenCentral()
-	}
-	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-	}
+    ext {
+        springBootVersion = '1.5.4.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
 }
 
 apply plugin: 'java'
@@ -18,12 +18,21 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 
 dependencies {
-	compile('org.springframework.boot:spring-boot-starter-web')
-	compileOnly('org.projectlombok:lombok')
-	testCompile('org.springframework.boot:spring-boot-starter-test')
+    compile('org.springframework.boot:spring-boot-starter-web')
+    compile('org.springframework.data:spring-data-hadoop:2.4.0.RELEASE')
+    compile('org.apache.hadoop:hadoop-common:2.7.3') {
+        exclude(group: 'log4j', module: 'log4j')
+        exclude(group: 'org.slf4j', module: 'slf4j-log4j12')
+    }
+    compile('org.apache.hbase:hbase-client:1.2.6') {
+        exclude(group: 'log4j', module: 'log4j')
+        exclude(group: 'org.slf4j', module: 'slf4j-log4j12')
+    }
+    compileOnly('org.projectlombok:lombok')
+    testCompile('org.springframework.boot:spring-boot-starter-test')
 }
