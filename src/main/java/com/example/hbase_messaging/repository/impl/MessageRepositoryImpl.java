@@ -36,9 +36,8 @@ public class MessageRepositoryImpl implements MessageRepository {
     private HBaseAdmin admin;
 
     @Autowired
-    public MessageRepositoryImpl(
-            @Qualifier("hbase") Configuration configuration, HbaseTemplate hbaseTemplate) throws Exception {
-        this.admin = (HBaseAdmin) ConnectionFactory.createConnection(configuration).getAdmin();
+    public MessageRepositoryImpl(HBaseAdmin admin, HbaseTemplate hbaseTemplate) throws Exception {
+        this.admin = admin;
         this.hbaseTemplate = hbaseTemplate;
 
         initialize();

@@ -1,5 +1,8 @@
 package com.example.hbase_messaging.configuration;
 
+import org.apache.hadoop.hbase.client.Connection;
+import org.apache.hadoop.hbase.client.ConnectionFactory;
+import org.apache.hadoop.hbase.client.HBaseAdmin;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -23,6 +26,12 @@ public class HbaseConfiguration {
         configuration.set("hbase.zookeeper.quorum", zkQuorum.trim());
         configuration.set("hbase.zookeeper.port", String.valueOf(zkPort));
         return configuration;
+    }
+
+    @Bean
+    public HBaseAdmin hbaseAdmin(
+            @Qualifier("hbase") org.apache.hadoop.conf.Configuration configuration) throws Exception {
+        return (HBaseAdmin) ConnectionFactory.createConnection(configuration).getAdmin();
     }
 
     @Bean
