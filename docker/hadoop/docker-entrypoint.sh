@@ -12,4 +12,3 @@ stop_docker() {
 
 trap "stop_docker" HUP INT QUIT TERM
 while true; do sleep 1; done
-
