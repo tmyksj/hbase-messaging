@@ -10,23 +10,22 @@ services:
         config: .ssh/config
         id_rsa: .ssh/hadoop.id_rsa
         id_rsa_pub: .ssh/hadoop.id_rsa.pub
-    hostname: docker-hadoop
     expose:
       - '22'
+      - '2122'
+      - '8020'
+      - '8030'
+      - '8031'
+      - '8032'
+      - '8033'
+      - '8040'
+      - '8042'
+      - '8088'
+      - '9000'
+      - '10020'
+      - '19888'
+      - '49707'
     ports:
-      - '2122:2122'
-      - '8020:8020'
-      - '8030:8030'
-      - '8031:8031'
-      - '8032:8032'
-      - '8033:8033'
-      - '8040:8040'
-      - '8042:8042'
-      - '8088:8088'
-      - '9000:9000'
-      - '10020:10020'
-      - '19888:19888'
-      - '49707:49707'
       - '50010:50010'
       - '50020:50020'
       - '50070:50070'
@@ -42,11 +41,10 @@ services:
         config: .ssh/config
         id_rsa: .ssh/hbase.id_rsa
         id_rsa_pub: .ssh/hbase.id_rsa.pub
-    hostname: docker-hbase
     expose:
       - '22'
+      - '2181'
     ports:
-      - '2181:2181'
       - '16000:16000'
       - '16010:16010'
       - '16011:16011'
@@ -72,3 +70,12 @@ services:
     depends_on:
       - hadoop
 
+  hbase_messaging:
+    build:
+      context: .
+      dockerfile: dockerfile-hbase-messaging
+    ports:
+      - '8080:8080'
+    depends_on:
+      - hadoop
+      - hbase
