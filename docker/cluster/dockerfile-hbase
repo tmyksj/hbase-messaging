@@ -1,0 +1,32 @@
+FROM debian:stretch
+
+RUN apt-get update
+RUN apt-get upgrade -y
+
+RUN apt-get install -y curl openssh-server pdsh
+
+COPY config/.ssh /root/.ssh
+RUN chmod 700 /root/.ssh
+
+RUN apt-get install -y openjdk-8-jdk
+ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
+
+RUN curl http://ftp.jaist.ac.jp/pub/apache/hbase/2.0.0-alpha-1/hbase-2.0.0-alpha-1-bin.tar.gz | tar xzf - -C /opt
+ENV HBASE_HOME /opt/hbase-2.0.0-alpha-1
+
+RUN sed -i 's!^# export JAVA_HOME=/usr/java/jdk1.8.0/$!export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64!g' ${HBASE_HOME}/conf/hbase-env.sh
+
+COPY config/hbase ${HBASE_HOME}
+
+COPY entrypoints/hbase /entrypoints
+ENTRYPOINT ["/entrypoints/hbase-default.sh"]
+
+# ssh
+EXPOSE 22
+
+EXPOSE 16000
+EXPOSE 16010 16011 16012 16013 16015
+EXPOSE 16020 16021 16022 16023 16025
+EXPOSE 16030 16031 16032 16033 16035
+EXPOSE 16200 16201 16202
+EXPOSE 16300 16301 16302

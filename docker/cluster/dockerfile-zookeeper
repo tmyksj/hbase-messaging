@@ -1,0 +1,26 @@
+FROM debian:stretch
+
+RUN apt-get update
+RUN apt-get upgrade -y
+
+RUN apt-get install -y curl openssh-server pdsh
+
+COPY config/.ssh /root/.ssh
+RUN chmod 700 /root/.ssh
+
+RUN apt-get install -y openjdk-8-jdk
+ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
+
+RUN curl http://ftp.jaist.ac.jp/pub/apache/zookeeper/zookeeper-3.4.10/zookeeper-3.4.10.tar.gz | tar xzf - -C /opt
+ENV ZOOKEEPER_HOME /opt/zookeeper-3.4.10
+
+COPY config/zookeeper ${HADOOP_HOME}
+
+COPY entrypoints/zookeeper /entrypoints
+ENTRYPOINT ["/entrypoints/zookeeper-default.sh"]
+
+# ssh
+EXPOSE 22
+# zookeeper
+EXPOSE 2181
+EXPOSE 2888 3888
