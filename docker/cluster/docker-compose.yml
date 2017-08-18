@@ -85,18 +85,42 @@ services:
 #    build:
 #      context: .
 #      dockerfile: dockerfile-hbase
-#
-#  zookeeper-1:
-#    build:
-#      context: .
-#      dockerfile: dockerfile-zookeeper
-#
-#  zookeeper-2:
-#    build:
-#      context: .
-#      dockerfile: dockerfile-zookeeper
-#
-#  zookeeper-3:
-#    build:
-#      context: .
-#      dockerfile: dockerfile-zookeeper
+
+  zookeeper-1:
+    build:
+      context: .
+      dockerfile: dockerfile-zookeeper
+    image: cluster-zookeeper
+    hostname: zookeeper-1
+    entrypoint:
+      - "/entrypoints/zookeeper-zookeeper.sh"
+      - "1"
+    expose:
+      - "22"
+      - "2181"
+      - "2888"
+      - "3888"
+
+  zookeeper-2:
+    image: cluster-zookeeper
+    hostname: zookeeper-2
+    entrypoint:
+      - "/entrypoints/zookeeper-zookeeper.sh"
+      - "2"
+    expose:
+      - "22"
+      - "2181"
+      - "2888"
+      - "3888"
+
+  zookeeper-3:
+    image: cluster-zookeeper
+    hostname: zookeeper-3
+    entrypoint:
+      - "/entrypoints/zookeeper-zookeeper.sh"
+      - "3"
+    expose:
+      - "22"
+      - "2181"
+      - "2888"
+      - "3888"
