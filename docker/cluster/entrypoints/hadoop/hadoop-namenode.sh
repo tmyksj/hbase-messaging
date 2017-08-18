@@ -8,11 +8,9 @@ if [ -f /entrypoints/first-run ]; then
 fi
 
 ${HADOOP_HOME}/bin/hdfs --daemon start namenode
-${HADOOP_HOME}/bin/hdfs --daemon start secondarynamenode
 
 stop_docker() {
   ${HADOOP_HOME}/bin/hdfs --daemon stop namenode
-  ${HADOOP_HOME}/bin/hdfs --daemon stop secondarynamenode
   exit 0
 }
 

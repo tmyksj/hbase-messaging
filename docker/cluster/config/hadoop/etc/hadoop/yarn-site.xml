@@ -16,7 +16,7 @@
 <configuration>
   <property>
     <name>yarn.resourcemanager.hostname</name>
-    <value>hadoop-resource-manager</value>
+    <value>hadoop-resourcemanager</value>
   </property>
   <property>
     <name>yarn.resourcemanager.scheduler.class</name>

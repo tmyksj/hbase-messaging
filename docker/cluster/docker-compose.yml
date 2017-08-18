@@ -1,45 +1,67 @@
 version: "3"
 
 services:
-  hadoop-resource-manager:
+  hadoop-resourcemanager:
     build:
       context: .
       dockerfile: dockerfile-hadoop
     image: cluster-hadoop
-    entrypoint: /entrypoints/hadoop-resource-manager.sh
+    hostname: hadoop-resourcemanager
+    entrypoint: /entrypoints/hadoop-resourcemanager.sh
     expose:
       - "22"
       - "8000-65535"
     ports:
       - "8088:8088"
+
+  hadoop-historyserver:
+    image: cluster-hadoop
+    hostname: hadoop-historyserver
+    entrypoint: /entrypoints/hadoop-historyserver.sh
+    expose:
+      - "22"
+      - "8000-65535"
+    ports:
       - "19888:19888"
 
-  hadoop-name-node:
+  hadoop-namenode:
     image: cluster-hadoop
-    entrypoint: /entrypoints/hadoop-name-node.sh
+    hostname: hadoop-namenode
+    entrypoint: /entrypoints/hadoop-namenode.sh
     expose:
       - "22"
       - "8000-65535"
     ports:
       - "9870:9870"
 
-  hadoop-data-node-1:
+  hadoop-secondarynamenode:
     image: cluster-hadoop
-    entrypoint: /entrypoints/hadoop-data-node.sh
+    hostname: hadoop-secondarynamenode
+    entrypoint: /entrypoints/hadoop-secondarynamenode.sh
     expose:
       - "22"
       - "8000-65535"
 
-  hadoop-data-node-2:
+  hadoop-datanode-1:
     image: cluster-hadoop
-    entrypoint: /entrypoints/hadoop-data-node.sh
+    hostname: hadoop-datanode-1
+    entrypoint: /entrypoints/hadoop-datanode.sh
     expose:
       - "22"
       - "8000-65535"
 
-  hadoop-data-node-3:
+  hadoop-datanode-2:
     image: cluster-hadoop
-    entrypoint: /entrypoints/hadoop-data-node.sh
+    hostname: hadoop-datanode-2
+    entrypoint: /entrypoints/hadoop-datanode.sh
+    expose:
+      - "22"
+      - "8000-65535"
+
+  hadoop-datanode-3:
+    image: cluster-hadoop
+    hostname: hadoop-datanode-3
+    entrypoint: /entrypoints/hadoop-datanode.sh
     expose:
       - "22"
       - "8000-65535"
