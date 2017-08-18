@@ -66,25 +66,46 @@ services:
       - "22"
       - "8000-65535"
 
-#  hbase-master:
-#    build:
-#      context: .
-#      dockerfile: dockerfile-hbase
-#
-#  hbase-region-server-1:
-#    build:
-#      context: .
-#      dockerfile: dockerfile-hbase
-#
-#  hbase-region-server-2:
-#    build:
-#      context: .
-#      dockerfile: dockerfile-hbase
-#
-#  hbase-region-server-3:
-#    build:
-#      context: .
-#      dockerfile: dockerfile-hbase
+  hbase-master:
+    build:
+      context: .
+      dockerfile: dockerfile-hbase
+    image: cluster-hbase
+    hostname: hbase-master
+    entrypoint: /entrypoints/hbase-master.sh
+    expose:
+      - "22"
+      - "8000-65535"
+    ports:
+      - "16010:16010"
+
+  hbase-backup-master:
+    image: cluster-hbase
+    hostname: hbase-backup-master
+    expose:
+      - "22"
+      - "8000-65535"
+
+  hbase-regionserver-1:
+    image: cluster-hbase
+    hostname: hbase-regionserver-1
+    expose:
+      - "22"
+      - "8000-65535"
+
+  hbase-regionserver-2:
+    image: cluster-hbase
+    hostname: hbase-regionserver-2
+    expose:
+      - "22"
+      - "8000-65535"
+
+  hbase-regionserver-3:
+    image: cluster-hbase
+    hostname: hbase-regionserver-3
+    expose:
+      - "22"
+      - "8000-65535"
 
   zookeeper-1:
     build:

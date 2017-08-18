@@ -28,6 +28,10 @@
   </property>
   <property>
     <name>hbase.rootdir</name>
-    <value>hdfs://hadoop-name-node:8020/hbase</value>
+    <value>hdfs://hadoop-namenode:8020/hbase</value>
+  </property>
+  <property>
+    <name>hbase.zookeeper.quorum</name>
+    <value>zookeeper-1,zookeeper-2,zookeeper-3</value>
   </property>
 </configuration>
