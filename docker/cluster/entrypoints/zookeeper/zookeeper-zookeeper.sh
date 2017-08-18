@@ -4,7 +4,8 @@ service ssh restart
 
 if [ -f /entrypoints/first-run ]; then
   rm /entrypoints/first-run
-  echo ${1} > ${ZOOKEEPER_HOME}/myid
+  mkdir /var/lib/zookeeper
+  echo ${1} > /var/lib/zookeeper/myid
 fi
 
 ${ZOOKEEPER_HOME}/bin/zkServer.sh start
