@@ -78,6 +78,11 @@ services:
       - "8000-65535"
     ports:
       - "16010:16010"
+    depends_on:
+      - hbase-backup-master
+      - hbase-regionserver-1
+      - hbase-regionserver-2
+      - hbase-regionserver-3
 
   hbase-backup-master:
     image: cluster-hbase
