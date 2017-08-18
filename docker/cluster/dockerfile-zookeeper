@@ -14,10 +14,12 @@ ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 RUN curl http://ftp.jaist.ac.jp/pub/apache/zookeeper/zookeeper-3.4.10/zookeeper-3.4.10.tar.gz | tar xzf - -C /opt
 ENV ZOOKEEPER_HOME /opt/zookeeper-3.4.10
 
-COPY config/zookeeper ${HADOOP_HOME}
+COPY config/zookeeper ${ZOOKEEPER_HOME}
 
 COPY entrypoints/zookeeper /entrypoints
 ENTRYPOINT ["/entrypoints/zookeeper-default.sh"]
+
+RUN touch /entrypoints/first-run
 
 # ssh
 EXPOSE 22
