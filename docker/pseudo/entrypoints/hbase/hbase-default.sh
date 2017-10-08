@@ -1,10 +1,11 @@
 #!/bin/bash
 
 service ssh restart
-start-hbase.sh
+
+${HBASE_HOME}/bin/start-hbase.sh
 
 stop_docker() {
-  stop-hbase.sh
+  ${HBASE_HOME}/bin/stop-hbase.sh
   exit 0
 }
 
