@@ -8,4 +8,5 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode
 public class PostMessageResponse {
     private MessageEntity message;
+    private long turnaroundTime;
 }

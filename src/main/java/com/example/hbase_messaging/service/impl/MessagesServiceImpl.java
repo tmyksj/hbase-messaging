@@ -26,22 +26,32 @@ public class MessagesServiceImpl implements MessagesService {
 
     @Override
     public GetMessagesResponse get(GetMessagesRequest request) {
+        long currentTime = System.currentTimeMillis();
+
         List<MessageEntity> entityList =
                 messageRepository.get(request.getUserIdFrom(), request.getUserIdTo());
 
+        long turnaroundTime = System.currentTimeMillis() - currentTime;
+
         GetMessagesResponse response = new GetMessagesResponse();
         response.setMessages(entityList);
+        response.setTurnaroundTime(turnaroundTime);
 
         return response;
     }
 
     @Override
     public PostMessageResponse post(PostMessageRequest request) {
+        long currentTime = System.currentTimeMillis();
+
         MessageEntity entity =
                 messageRepository.post(request.getUserIdFrom(), request.getUserIdTo(), request.getMessage());
 
+        long turnaroundTime = System.currentTimeMillis() - currentTime;
+
         PostMessageResponse response = new PostMessageResponse();
         response.setMessage(entity);
+        response.setTurnaroundTime(turnaroundTime);
 
         return response;
     }
