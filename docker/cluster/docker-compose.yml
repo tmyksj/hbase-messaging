@@ -9,7 +9,8 @@ services:
     hostname: hadoop-resourcemanager
     entrypoint: /entrypoints/hadoop-resourcemanager.sh
     expose:
-      - "0-65535"
+      - "22"
+      - "8000-65535"
     ports:
       - "8088:8088"
 
@@ -18,7 +19,8 @@ services:
     hostname: hadoop-historyserver
     entrypoint: /entrypoints/hadoop-historyserver.sh
     expose:
-      - "0-65535"
+      - "22"
+      - "8000-65535"
     ports:
       - "19888:19888"
 
@@ -27,7 +29,8 @@ services:
     hostname: hadoop-namenode
     entrypoint: /entrypoints/hadoop-namenode.sh
     expose:
-      - "0-65535"
+      - "22"
+      - "8000-65535"
     ports:
       - "9870:9870"
 
@@ -36,28 +39,32 @@ services:
     hostname: hadoop-secondarynamenode
     entrypoint: /entrypoints/hadoop-secondarynamenode.sh
     expose:
-      - "0-65535"
+      - "22"
+      - "8000-65535"
 
   hadoop-datanode-1:
     image: cluster-hadoop
     hostname: hadoop-datanode-1
     entrypoint: /entrypoints/hadoop-datanode.sh
     expose:
-      - "0-65535"
+      - "22"
+      - "8000-65535"
 
   hadoop-datanode-2:
     image: cluster-hadoop
     hostname: hadoop-datanode-2
     entrypoint: /entrypoints/hadoop-datanode.sh
     expose:
-      - "0-65535"
+      - "22"
+      - "8000-65535"
 
   hadoop-datanode-3:
     image: cluster-hadoop
     hostname: hadoop-datanode-3
     entrypoint: /entrypoints/hadoop-datanode.sh
     expose:
-      - "0-65535"
+      - "22"
+      - "8000-65535"
 
   hbase-master:
     build:
@@ -67,7 +74,8 @@ services:
     hostname: hbase-master
     entrypoint: /entrypoints/hbase-master.sh
     expose:
-      - "0-65535"
+      - "22"
+      - "8000-65535"
     ports:
       - "16010:16010"
     depends_on:
@@ -80,25 +88,29 @@ services:
     image: cluster-hbase
     hostname: hbase-backup-master
     expose:
-      - "0-65535"
+      - "22"
+      - "8000-65535"
 
   hbase-regionserver-1:
     image: cluster-hbase
     hostname: hbase-regionserver-1
     expose:
-      - "0-65535"
+      - "22"
+      - "8000-65535"
 
   hbase-regionserver-2:
     image: cluster-hbase
     hostname: hbase-regionserver-2
     expose:
-      - "0-65535"
+      - "22"
+      - "8000-65535"
 
   hbase-regionserver-3:
     image: cluster-hbase
     hostname: hbase-regionserver-3
     expose:
-      - "0-65535"
+      - "22"
+      - "8000-65535"
 
   zookeeper-1:
     build:
@@ -110,7 +122,10 @@ services:
       - "/entrypoints/zookeeper-zookeeper.sh"
       - "1"
     expose:
-      - "0-65535"
+      - "22"
+      - "2181"
+      - "2888"
+      - "3888"
 
   zookeeper-2:
     image: cluster-zookeeper
@@ -119,7 +134,10 @@ services:
       - "/entrypoints/zookeeper-zookeeper.sh"
       - "2"
     expose:
-      - "0-65535"
+      - "22"
+      - "2181"
+      - "2888"
+      - "3888"
 
   zookeeper-3:
     image: cluster-zookeeper
@@ -128,4 +146,7 @@ services:
       - "/entrypoints/zookeeper-zookeeper.sh"
       - "3"
     expose:
-      - "0-65535"
+      - "22"
+      - "2181"
+      - "2888"
+      - "3888"
