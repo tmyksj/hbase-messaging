@@ -11,8 +11,8 @@ RUN chmod 700 /root/.ssh
 RUN apt-get install -y openjdk-8-jdk
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 
-RUN curl http://ftp.jaist.ac.jp/pub/apache/hbase/2.0.0-alpha-1/hbase-2.0.0-alpha-1-bin.tar.gz | tar xzf - -C /opt
-ENV HBASE_HOME /opt/hbase-2.0.0-alpha-1
+RUN curl http://ftp.jaist.ac.jp/pub/apache/hbase/2.0.0-alpha-3/hbase-2.0.0-alpha3-bin.tar.gz | tar xzf - -C /opt
+ENV HBASE_HOME /opt/hbase-2.0.0-alpha-3
 
 RUN sed -i 's!^# export JAVA_HOME=/usr/java/jdk1.8.0/$!export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64!g' ${HBASE_HOME}/conf/hbase-env.sh
 RUN sed -i 's!^# export HBASE_MANAGES_ZK=true$!export HBASE_MANAGES_ZK=false!g' ${HBASE_HOME}/conf/hbase-env.sh
