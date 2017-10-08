@@ -22,8 +22,3 @@ COPY entrypoints/hadoop /entrypoints
 ENTRYPOINT ["/entrypoints/hadoop-default.sh"]
 
 RUN touch /entrypoints/first-run
-
-# ssh
-EXPOSE 22
-# hadoop
-EXPOSE 8000-65535
