@@ -131,7 +131,7 @@ public class MessageRepositoryImpl implements MessageRepository {
     }
 
     private void seed(int numberOfMessages) throws Exception {
-        int size = 100;
+        int size = 10000;
         List<String> fromUserIdList = generateUserIdList(size);
         List<String> toUserIdList = generateUserIdList(size);
 
