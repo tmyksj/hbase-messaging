@@ -104,16 +104,20 @@ public class MessageRepositoryImpl implements MessageRepository {
 
     @Override
     public void seed(Seed seed) {
-        if (seed.getMessageList() != null) {
-            seed(seed.getMessageList());
-        }
+        try {
+            if (seed.getMessageList() != null) {
+                seed(seed.getMessageList());
+            }
 
-        if (seed.getNumberOfMessages() > 0) {
-            seed(seed.getNumberOfMessages());
+            if (seed.getNumberOfMessages() > 0) {
+                seed(seed.getNumberOfMessages());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
-    private void seed(List<Seed.Message> messageList) {
+    private void seed(List<Seed.Message> messageList) throws Exception {
         try (Table table = connection.getTable(TABLE_NAME)) {
             for (Seed.Message message : messageList) {
                 long timestamp = System.currentTimeMillis();
@@ -123,11 +127,10 @@ public class MessageRepositoryImpl implements MessageRepository {
 
                 table.put(put);
             }
-        } catch (Exception e) {
         }
     }
 
-    private void seed(int numberOfMessages) {
+    private void seed(int numberOfMessages) throws Exception {
         int size = 100;
         List<String> fromUserIdList = generateUserIdList(size);
         List<String> toUserIdList = generateUserIdList(size);
@@ -143,7 +146,6 @@ public class MessageRepositoryImpl implements MessageRepository {
 
                 table.put(put);
             }
-        } catch (Exception e) {
         }
     }
 
