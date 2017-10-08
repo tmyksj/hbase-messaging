@@ -21,8 +21,3 @@ COPY config/hbase ${HBASE_HOME}
 
 COPY entrypoints/hbase /entrypoints
 ENTRYPOINT ["/entrypoints/hbase-default.sh"]
-
-# ssh
-EXPOSE 22
-# hbase
-EXPOSE 8000-65535
