@@ -6,6 +6,7 @@ services:
       context: .
       dockerfile: dockerfile-hadoop
     image: preudo-hadoop
+    hostname: hadoop
     expose:
       - "0-65535"
     ports:
@@ -18,6 +19,7 @@ services:
       context: .
       dockerfile: dockerfile-hbase
     image: preudo-hbase
+    hostname: hbase
     expose:
       - "0-65535"
     ports:

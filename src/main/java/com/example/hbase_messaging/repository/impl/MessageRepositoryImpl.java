@@ -2,19 +2,10 @@ package com.example.hbase_messaging.repository.impl;
 
 import com.example.hbase_messaging.entity.MessageEntity;
 import com.example.hbase_messaging.repository.MessageRepository;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hbase.CellUtil;
-import org.apache.hadoop.hbase.HColumnDescriptor;
-import org.apache.hadoop.hbase.HTableDescriptor;
 import org.apache.hadoop.hbase.TableName;
-import org.apache.hadoop.hbase.client.ConnectionFactory;
-import org.apache.hadoop.hbase.client.HBaseAdmin;
-import org.apache.hadoop.hbase.client.Put;
-import org.apache.hadoop.hbase.client.Scan;
+import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.hadoop.hbase.HbaseTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collections;
@@ -24,59 +15,64 @@ import java.util.stream.Collectors;
 @Repository
 public class MessageRepositoryImpl implements MessageRepository {
 
-    private static final String TABLE_NAME = "messages";
-    private static final String DESCRIPTOR = ".";
-
+    private static final TableName TABLE_NAME = TableName.valueOf("messages");
     private static final byte[] FAMILY = Bytes.toBytes("f");
     private static final byte[] QUALIFIER = Bytes.toBytes("q");
 
     private static final int MAX_VERSIONS = 65536;
 
-    private HbaseTemplate hbaseTemplate;
-    private HBaseAdmin admin;
+    private Connection connection;
+
+    private static final String DESCRIPTOR = ".";
 
     @Autowired
-    public MessageRepositoryImpl(HBaseAdmin admin, HbaseTemplate hbaseTemplate) throws Exception {
-        this.admin = admin;
-        this.hbaseTemplate = hbaseTemplate;
-
+    public MessageRepositoryImpl(Connection connection) throws Exception {
+        this.connection = connection;
         initialize();
     }
 
     private void initialize() throws Exception {
-        TableName tableName = TableName.valueOf(TABLE_NAME);
-
-        if (!admin.tableExists(tableName)) {
-            HTableDescriptor tableDescriptor = new HTableDescriptor(tableName);
-            HColumnDescriptor columnDescriptor = new HColumnDescriptor(FAMILY);
-            columnDescriptor.setMaxVersions(MAX_VERSIONS);
-            tableDescriptor.addFamily(columnDescriptor);
-
-            admin.createTable(tableDescriptor);
+        try (Admin admin = connection.getAdmin()) {
+            if (!admin.tableExists(TABLE_NAME)) {
+                admin.createTable(TableDescriptorBuilder.newBuilder(TABLE_NAME)
+                        .addColumnFamily(ColumnFamilyDescriptorBuilder.newBuilder(FAMILY)
+                                .setMaxVersions(MAX_VERSIONS)
+                                .build())
+                        .build());
+            }
         }
     }
 
     @Override
     public List<MessageEntity> get(String userIdFrom, String userIdTo) {
-        byte[] row = Bytes.toBytes(userIdFrom + DESCRIPTOR + userIdTo);
+        if (userIdFrom.contains(DESCRIPTOR) || userIdTo.contains(DESCRIPTOR)) {
+            return null;
+        }
 
-        Scan scan = new Scan()
-                .setStartRow(row)
-                .setStopRow(row)
-                .addColumn(FAMILY, QUALIFIER)
-                .setMaxVersions(MAX_VERSIONS);
+        try (Table table = connection.getTable(TABLE_NAME)) {
+            byte[] row = Bytes.toBytes(userIdFrom + DESCRIPTOR + userIdTo);
 
-        List<List<MessageEntity>> entityList = hbaseTemplate.find(TABLE_NAME, scan, (result, rowNum) ->
-                result.listCells().stream().map(cell -> {
+            Get get = new Get(row)
+                    .addColumn(FAMILY, QUALIFIER)
+                    .readVersions(MAX_VERSIONS);
+
+            Result result = table.get(get);
+
+            if (result.isEmpty()) {
+                return Collections.emptyList();
+            } else {
+                return result.getMap().get(FAMILY).get(QUALIFIER).entrySet().stream().map((entry) -> {
                     MessageEntity entity = new MessageEntity();
                     entity.setFrom(userIdFrom);
                     entity.setTo(userIdTo);
-                    entity.setMessage(Bytes.toString(CellUtil.cloneValue(cell)));
-                    entity.setTimestamp(cell.getTimestamp());
+                    entity.setMessage(Bytes.toString(entry.getValue()));
+                    entity.setTimestamp(entry.getKey());
                     return entity;
-                }).collect(Collectors.toList()));
-
-        return entityList.size() == 1 ? entityList.get(0) : Collections.emptyList();
+                }).collect(Collectors.toList());
+            }
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
@@ -85,11 +81,12 @@ public class MessageRepositoryImpl implements MessageRepository {
             return null;
         }
 
-        return hbaseTemplate.execute(TABLE_NAME, table -> {
+        try (Table table = connection.getTable(TABLE_NAME)) {
             long timestamp = System.currentTimeMillis();
 
             Put put = new Put(Bytes.toBytes(userIdFrom + DESCRIPTOR + userIdTo));
             put.addColumn(FAMILY, QUALIFIER, timestamp, Bytes.toBytes(message));
+
             table.put(put);
 
             MessageEntity entity = new MessageEntity();
@@ -99,6 +96,8 @@ public class MessageRepositoryImpl implements MessageRepository {
             entity.setTimestamp(timestamp);
 
             return entity;
-        });
+        } catch (Exception e) {
+            return null;
+        }
     }
 }
