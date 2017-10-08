@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Repository
 public class MessageRepositoryImpl implements MessageRepository {
@@ -99,5 +100,61 @@ public class MessageRepositoryImpl implements MessageRepository {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    @Override
+    public void seed(Seed seed) {
+        try {
+            if (seed.getMessageList() != null) {
+                seed(seed.getMessageList());
+            }
+
+            if (seed.getNumberOfMessages() > 0) {
+                seed(seed.getNumberOfMessages());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void seed(List<Seed.Message> messageList) throws Exception {
+        try (Table table = connection.getTable(TABLE_NAME)) {
+            for (Seed.Message message : messageList) {
+                long timestamp = System.currentTimeMillis();
+
+                Put put = new Put(Bytes.toBytes(message.getUserIdFrom() + DESCRIPTOR + message.getUserIdTo()));
+                put.addColumn(FAMILY, QUALIFIER, timestamp, Bytes.toBytes(message.getMessage()));
+
+                table.put(put);
+            }
+        }
+    }
+
+    private void seed(int numberOfMessages) throws Exception {
+        int size = 100;
+        List<String> fromUserIdList = generateUserIdList(size);
+        List<String> toUserIdList = generateUserIdList(size);
+
+        try (Table table = connection.getTable(TABLE_NAME)) {
+            for (int i = 0; i < numberOfMessages; i++) {
+                String fromUserId = fromUserIdList.get((int)(Math.random() * size));
+                String toUserId = toUserIdList.get((int)(Math.random() * size));
+                long timestamp = System.currentTimeMillis();
+
+                Put put = new Put(Bytes.toBytes(fromUserId + DESCRIPTOR + toUserId));
+                put.addColumn(FAMILY, QUALIFIER, timestamp, Bytes.toBytes("messages"));
+
+                table.put(put);
+            }
+        }
+    }
+
+    private List<String> generateUserIdList(int length) {
+        return Stream.generate(() ->
+                Stream.generate(() ->
+                        Character.toString("abcdefghijklmnopqrstuvwxyz".charAt((int)(Math.random() * 26))))
+                        .limit(16)
+                        .collect(Collectors.joining()))
+                .limit(length).collect(Collectors.toList());
     }
 }
