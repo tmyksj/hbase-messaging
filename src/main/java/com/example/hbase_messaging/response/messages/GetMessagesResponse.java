@@ -10,4 +10,5 @@ import java.util.List;
 @EqualsAndHashCode
 public class GetMessagesResponse {
     List<MessageEntity> messages;
+    private long turnaroundTime;
 }
