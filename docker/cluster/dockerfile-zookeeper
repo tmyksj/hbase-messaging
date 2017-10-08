@@ -20,9 +20,3 @@ COPY entrypoints/zookeeper /entrypoints
 ENTRYPOINT ["/entrypoints/zookeeper-default.sh"]
 
 RUN touch /entrypoints/first-run
-
-# ssh
-EXPOSE 22
-# zookeeper
-EXPOSE 2181
-EXPOSE 2888 3888

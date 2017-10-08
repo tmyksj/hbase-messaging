@@ -1,9 +1,0 @@
-FROM frolvlad/alpine-oraclejdk8:slim
-
-COPY hbase-messaging/hbase-messaging-0.0.1.jar app.jar
-RUN sh -c 'touch /app.jar'
-ENV JAVA_OPTS ""
-
-COPY hbase-messaging/docker-entrypoint.sh docker-entrypoint.sh
-RUN sh -c 'chmod 700 /docker-entrypoint.sh'
-ENTRYPOINT ["sh", "-c", "/docker-entrypoint.sh"]
