@@ -1,0 +1,257 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>hbase-messaging webui</title>
+    <script>
+        /*<![CDATA[*/
+
+        "use strict";
+
+        window.addEventListener("DOMContentLoaded", function() {
+            let messagesGet = document.querySelector("#messages__get");
+            let form = messagesGet.querySelector(".form-response__form");
+            let response = messagesGet.querySelector(".form-response__response");
+
+            let submit = form.querySelector("button");
+            submit.addEventListener("click", function() {
+                submit.disabled = true;
+
+                let userIdFrom = form.querySelector("[name=\"userIdFrom\"]").value;
+                let userIdTo = form.querySelector("[name=\"userIdTo\"]").value;
+
+                let request = new XMLHttpRequest();
+                request.open("GET", "/messages/" + userIdFrom + "/" + userIdTo);
+
+                request.addEventListener("load", function() {
+                    response.querySelector("textarea").value =
+                        JSON.stringify(JSON.parse(request.response), null, 4);
+                });
+
+                request.addEventListener("loadend", function() {
+                    submit.disabled = false;
+                });
+
+                request.send();
+            });
+        });
+
+        window.addEventListener("DOMContentLoaded", function() {
+            let messagesPost = document.querySelector("#messages__post");
+            let form = messagesPost.querySelector(".form-response__form");
+            let response = messagesPost.querySelector(".form-response__response");
+
+            let submit = form.querySelector("button");
+            submit.addEventListener("click", function() {
+                submit.disabled = true;
+
+                let userIdFrom = form.querySelector("[name=\"userIdFrom\"]").value;
+                let userIdTo = form.querySelector("[name=\"userIdTo\"]").value;
+                let message = form.querySelector("[name=\"message\"]").value;
+
+                let request = new XMLHttpRequest();
+                request.open("POST", "/messages/" + userIdFrom + "/" + userIdTo);
+                request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+                request.addEventListener("load", function() {
+                    response.querySelector("textarea").value =
+                        JSON.stringify(JSON.parse(request.response), null, 4);
+                });
+
+                request.addEventListener("loadend", function() {
+                    submit.disabled = false;
+                });
+
+                request.send("message=" + message);
+            });
+        });
+
+        window.addEventListener("DOMContentLoaded", function() {
+            let seedsPost = document.querySelector("#seeds__post");
+            let form = seedsPost.querySelector(".form-response__form");
+            let response = seedsPost.querySelector(".form-response__response");
+
+            let aborted = false;
+            let startedAt = 0;
+            let totalSeeds = 0;
+            let executedSeeds = 0;
+            let perSeeds = 10000;
+
+            let abort = form.querySelectorAll("button")[0];
+            abort.disabled = true;
+            abort.addEventListener("click", function() {
+                abort.disabled = true;
+                aborted = true;
+            });
+
+            let submit = form.querySelectorAll("button")[1];
+            submit.addEventListener("click", function() {
+                abort.disabled = false;
+                submit.disabled = true;
+
+                aborted = false;
+                startedAt = Date.now();
+
+                totalSeeds = parseInt(form.querySelector("[name=\"numberOfMessages\"]").value);
+                executedSeeds = 0;
+
+                seed();
+            });
+
+            function seed() {
+                let request = new XMLHttpRequest();
+                request.open("POST", "/seeds");
+                request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+                request.addEventListener("load", function() {
+                    let currentTime = Date.now();
+                    let elapsed = (currentTime - startedAt) / 1000;
+                    let hour = Math.floor(elapsed / 3600);
+                    let min = Math.floor((elapsed % 3600) / 60);
+                    let sec = (elapsed % 3600) % 60;
+
+                    response.querySelector("textarea").value =
+                        executedSeeds + "/" + totalSeeds + " (" + Math.floor(executedSeeds / totalSeeds * 100) + "%)"
+                        + "    " + hour + "h " + min + "min " + sec + "sec";
+                });
+
+                request.addEventListener("loadend", function() {
+                    if (request.status !== 201) {
+                        abort.disabled = true;
+                        submit.disabled = false;
+
+                        response.querySelector("textarea").value += "    (error).";
+                    } else if (executedSeeds === totalSeeds) {
+                        abort.disabled = true;
+                        submit.disabled = false;
+
+                        response.querySelector("textarea").value += "    executed.";
+                    } else if (aborted) {
+                        abort.disabled = true;
+                        submit.disabled = false;
+
+                        response.querySelector("textarea").value += "    aborted.";
+                    } else {
+                        seed();
+                    }
+                });
+
+                let remainSeeds = totalSeeds - executedSeeds;
+                let seeds = (remainSeeds <= perSeeds ? remainSeeds : perSeeds);
+                executedSeeds += seeds;
+
+                request.send("numberOfMessages=" + seeds);
+            }
+        });
+
+        /*]]>*/
+    </script>
+    <style>
+        @media (min-width: 1200px) {
+            main {
+                width: 1170px;
+                margin: 0 auto;
+            }
+        }
+
+        .form-response {
+            display: flex;
+        }
+
+        .form-response__form {
+            width: 50%;
+            padding-right: 1rem;
+            text-align: right;
+        }
+
+        .form-response__form label {
+            display: block;
+        }
+
+        .form-response__form label span {
+            padding-right: 0.5rem;
+        }
+
+        .form-response__response {
+            width: 50%;
+        }
+
+        .form-response__response span {
+            display: block;
+        }
+
+        .form-response__response textarea {
+            width: 100%;
+            box-sizing: border-box;
+            resize: vertical;
+        }
+    </style>
+</head>
+
+<body>
+<header>
+    <h1>hbase-messaging webui</h1>
+</header>
+
+<main>
+    <section>
+        <h2>/messages</h2>
+
+        <section>
+            <h3>get</h3>
+
+            <div id="messages__get" class="form-response">
+                <div class="form-response__form">
+                    <label><span>User Id (From)</span><input type="text" name="userIdFrom" /></label>
+                    <label><span>User Id (To)</span><input type="text" name="userIdTo" /></label>
+                    <button type="button">Send</button>
+                </div>
+
+                <div class="form-response__response">
+                    <label><span>Response</span><textarea></textarea></label>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h3>post</h3>
+
+            <div id="messages__post" class="form-response">
+                <div class="form-response__form">
+                    <label><span>User Id (From)</span><input type="text" name="userIdFrom" /></label>
+                    <label><span>User Id (To)</span><input type="text" name="userIdTo" /></label>
+                    <label><span>Message</span><input type="text" name="message" /></label>
+                    <button type="button">Send</button>
+                </div>
+
+                <div class="form-response__response">
+                    <label><span>Response</span><textarea></textarea></label>
+                </div>
+            </div>
+        </section>
+    </section>
+
+    <section>
+        <h2>/seeds</h2>
+
+        <section>
+            <h3>post</h3>
+
+            <div id="seeds__post" class="form-response">
+                <div class="form-response__form">
+                    <label><span>Number Of Messages</span><input type="text" name="numberOfMessages" /></label>
+                    <button type="button">Abort</button>
+                    <button type="button">Send</button>
+                </div>
+
+                <div class="form-response__response">
+                    <label><span>Response</span><textarea></textarea></label>
+                </div>
+            </div>
+        </section>
+    </section>
+</main>
+</body>
+
+</html>
