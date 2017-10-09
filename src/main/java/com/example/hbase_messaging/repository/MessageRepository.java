@@ -14,15 +14,6 @@ public interface MessageRepository {
     @Data
     @EqualsAndHashCode
     class Seed {
-        private List<Message> messageList;
         private int numberOfMessages;
-
-        @Data
-        @EqualsAndHashCode
-        public static class Message {
-            private String userIdFrom;
-            private String userIdTo;
-            private String message;
-        }
     }
 }
