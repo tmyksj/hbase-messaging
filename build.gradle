@@ -21,9 +21,9 @@ repositories {
     mavenCentral()
 }
 
-
 dependencies {
     compile('org.springframework.boot:spring-boot-starter-web')
+    compile('org.springframework.boot:spring-boot-starter-thymeleaf')
     compile('org.springframework.boot:spring-boot-starter-tomcat')
     compile('org.springframework.data:spring-data-hadoop:2.4.0.RELEASE')
     compile('org.apache.hadoop:hadoop-common:3.0.0-alpha4') {
