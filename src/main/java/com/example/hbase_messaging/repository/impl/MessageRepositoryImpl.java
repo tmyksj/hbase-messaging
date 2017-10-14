@@ -24,7 +24,7 @@ public class MessageRepositoryImpl implements MessageRepository {
 
     private Connection connection;
 
-    private static final String DESCRIPTOR = ".";
+    private static final String DESCRIPTOR = "::";
 
     @Autowired
     public MessageRepositoryImpl(Connection connection) throws Exception {
