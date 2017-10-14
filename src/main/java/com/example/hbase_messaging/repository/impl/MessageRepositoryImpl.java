@@ -22,9 +22,9 @@ public class MessageRepositoryImpl implements MessageRepository {
 
     private static final int MAX_VERSIONS = 65536;
 
-    private Connection connection;
+    private static final String DELIMITER = "::";
 
-    private static final String DESCRIPTOR = "::";
+    private Connection connection;
 
     @Autowired
     public MessageRepositoryImpl(Connection connection) throws Exception {
@@ -46,12 +46,12 @@ public class MessageRepositoryImpl implements MessageRepository {
 
     @Override
     public List<MessageEntity> get(String userIdFrom, String userIdTo) {
-        if (userIdFrom.contains(DESCRIPTOR) || userIdTo.contains(DESCRIPTOR)) {
+        if (userIdFrom.contains(DELIMITER) || userIdTo.contains(DELIMITER)) {
             return null;
         }
 
         try (Table table = connection.getTable(TABLE_NAME)) {
-            byte[] row = Bytes.toBytes(userIdFrom + DESCRIPTOR + userIdTo);
+            byte[] row = Bytes.toBytes(userIdFrom + DELIMITER + userIdTo);
 
             Get get = new Get(row)
                     .addColumn(FAMILY, QUALIFIER)
@@ -78,14 +78,14 @@ public class MessageRepositoryImpl implements MessageRepository {
 
     @Override
     public MessageEntity post(String userIdFrom, String userIdTo, String message) {
-        if (userIdFrom.contains(DESCRIPTOR) || userIdTo.contains(DESCRIPTOR)) {
+        if (userIdFrom.contains(DELIMITER) || userIdTo.contains(DELIMITER)) {
             return null;
         }
 
         try (Table table = connection.getTable(TABLE_NAME)) {
             long timestamp = System.currentTimeMillis();
 
-            Put put = new Put(Bytes.toBytes(userIdFrom + DESCRIPTOR + userIdTo));
+            Put put = new Put(Bytes.toBytes(userIdFrom + DELIMITER + userIdTo));
             put.addColumn(FAMILY, QUALIFIER, timestamp, Bytes.toBytes(message));
 
             table.put(put);
@@ -124,7 +124,7 @@ public class MessageRepositoryImpl implements MessageRepository {
                     String toUserId = toUserIdList.get((int)(Math.random() * size));
                     long timestamp = System.currentTimeMillis();
 
-                    Put put = new Put(Bytes.toBytes(fromUserId + DESCRIPTOR + toUserId));
+                    Put put = new Put(Bytes.toBytes(fromUserId + DELIMITER + toUserId));
                     put.addColumn(FAMILY, QUALIFIER, timestamp, Bytes.toBytes("messages"));
 
                     table.put(put);
