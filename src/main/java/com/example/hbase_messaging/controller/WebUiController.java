@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class WebUiController {
     @RequestMapping(path = "/webui", method = RequestMethod.GET)
     public String get() {
-        return "/webui/index";
+        return "webui/index";
     }
 }
-
