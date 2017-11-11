@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 @Repository
@@ -103,33 +104,25 @@ public class MessageRepositoryImpl implements MessageRepository {
     }
 
     @Override
-    public void seed(Seed seed) {
-        try {
-            seed(seed.getNumberOfMessages());
+    public void seed(int numberOfMessages) {
+        int userIdSizePerSeed = 8192;
+
+        try (Table table = connection.getTable(TABLE_NAME)) {
+            List<String> userIdList = generateUserIdList(userIdSizePerSeed);
+            long beginTime = System.currentTimeMillis() - numberOfMessages;
+
+            table.put(IntStream.range(0, numberOfMessages).mapToObj(i -> {
+                String fromUserId = userIdList.get((int)(Math.random() * userIdSizePerSeed));
+                String toUserId = userIdList.get((int)(Math.random() * userIdSizePerSeed));
+                long timestamp = beginTime + i;
+
+                Put put = new Put(Bytes.toBytes(fromUserId + DELIMITER + toUserId));
+                put.addColumn(FAMILY, QUALIFIER, timestamp, Bytes.toBytes("messages"));
+
+                return put;
+            }).collect(Collectors.toList()));
         } catch (Exception e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    private void seed(int numberOfMessages) throws Exception {
-        int size = 100;
-
-        for (int i = 0; i < numberOfMessages / size; i++) {
-            List<String> fromUserIdList = generateUserIdList(size);
-            List<String> toUserIdList = generateUserIdList(size);
-
-            try (Table table = connection.getTable(TABLE_NAME)) {
-                for (int j = 0; j < size; j++) {
-                    String fromUserId = fromUserIdList.get((int)(Math.random() * size));
-                    String toUserId = toUserIdList.get((int)(Math.random() * size));
-                    long timestamp = System.currentTimeMillis();
-
-                    Put put = new Put(Bytes.toBytes(fromUserId + DELIMITER + toUserId));
-                    put.addColumn(FAMILY, QUALIFIER, timestamp, Bytes.toBytes("messages"));
-
-                    table.put(put);
-                }
-            }
         }
     }
 
@@ -137,7 +130,7 @@ public class MessageRepositoryImpl implements MessageRepository {
         return Stream.generate(() ->
                 Stream.generate(() ->
                         Character.toString("abcdefghijklmnopqrstuvwxyz".charAt((int)(Math.random() * 26))))
-                        .limit(12)
+                        .limit(8)
                         .collect(Collectors.joining()))
                 .limit(length).collect(Collectors.toList());
     }
