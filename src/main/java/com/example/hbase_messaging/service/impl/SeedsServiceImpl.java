@@ -20,8 +20,6 @@ public class SeedsServiceImpl implements SeedsService {
 
     @Override
     public void post(PostSeedsRequest request) {
-        MessageRepository.Seed seed = new MessageRepository.Seed();
-        seed.setNumberOfMessages(request.getNumberOfMessages());
-        messageRepository.seed(seed);
+        messageRepository.seed(request.getNumberOfMessages());
     }
 }
