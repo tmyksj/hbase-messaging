@@ -22,4 +22,3 @@
     <value>hdfs://hadoop:9000</value>
   </property>
 </configuration>
-
