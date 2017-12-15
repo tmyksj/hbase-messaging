@@ -15,8 +15,8 @@ RUN chmod 644 /root/.ssh/id_rsa.pub
 RUN apt-get install -y openjdk-8-jdk
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 
-RUN curl http://ftp.jaist.ac.jp/pub/apache/hadoop/common/hadoop-3.0.0-beta1/hadoop-3.0.0-beta1.tar.gz | tar xzf - -C /opt
-ENV HADOOP_HOME /opt/hadoop-3.0.0-beta1
+RUN curl http://ftp.jaist.ac.jp/pub/apache/hadoop/common/hadoop-3.0.0/hadoop-3.0.0.tar.gz | tar xzf - -C /opt
+ENV HADOOP_HOME /opt/hadoop-3.0.0
 
 RUN sed -i 's!^export JAVA_HOME=${JAVA_HOME}$!export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64!g' ${HADOOP_HOME}/etc/hadoop/hadoop-env.sh
 

@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 services:
   hadoop:
@@ -10,8 +10,8 @@ services:
     expose:
       - "0-65535"
     ports:
-      - "8020-8020"
       - "8088:8088"
+      - "9000:9000"
       - "9870:9870"
 
   hbase:
