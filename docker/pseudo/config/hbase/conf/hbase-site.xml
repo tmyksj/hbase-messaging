@@ -28,7 +28,6 @@
   </property>
   <property>
     <name>hbase.rootdir</name>
-    <value>hdfs://hadoop:8020/hbase</value>
+    <value>hdfs://hadoop:9000/hbase</value>
   </property>
 </configuration>
-

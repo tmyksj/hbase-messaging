@@ -1,24 +1,24 @@
-version: '3'
+version: "3"
 
 services:
   hadoop:
     build:
       context: .
       dockerfile: dockerfile-hadoop
-    image: preudo-hadoop
+    image: pseudo-hadoop
     hostname: hadoop
     expose:
       - "0-65535"
     ports:
-      - "8020-8020"
       - "8088:8088"
+      - "9000:9000"
       - "9870:9870"
 
   hbase:
     build:
       context: .
       dockerfile: dockerfile-hbase
-    image: preudo-hbase
+    image: pseudo-hbase
     hostname: hbase
     expose:
       - "0-65535"
@@ -26,5 +26,6 @@ services:
       - "2181:2181"
       - "16000:16000"
       - "16010:16010"
+      - "16201:16201"
     depends_on:
       - hadoop
