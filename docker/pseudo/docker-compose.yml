@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: dockerfile-hadoop
-    image: preudo-hadoop
+    image: pseudo-hadoop
     hostname: hadoop
     expose:
       - "0-65535"
@@ -18,7 +18,7 @@ services:
     build:
       context: .
       dockerfile: dockerfile-hbase
-    image: preudo-hbase
+    image: pseudo-hbase
     hostname: hbase
     expose:
       - "0-65535"
