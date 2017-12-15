@@ -26,11 +26,11 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-thymeleaf')
     compile('org.springframework.boot:spring-boot-starter-tomcat')
     compile('org.springframework.data:spring-data-hadoop:2.4.0.RELEASE')
-    compile('org.apache.hadoop:hadoop-common:3.0.0-alpha4') {
+    compile('org.apache.hadoop:hadoop-common:3.0.0-beta1') {
         exclude(group: 'log4j', module: 'log4j')
         exclude(group: 'org.slf4j', module: 'slf4j-log4j12')
     }
-    compile('org.apache.hbase:hbase-client:2.0.0-alpha3') {
+    compile('org.apache.hbase:hbase-client:2.0.0-alpha4') {
         exclude(group: 'log4j', module: 'log4j')
         exclude(group: 'org.slf4j', module: 'slf4j-log4j12')
     }

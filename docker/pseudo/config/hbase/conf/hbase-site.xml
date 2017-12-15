@@ -31,4 +31,3 @@
     <value>hdfs://hadoop:9000/hbase</value>
   </property>
 </configuration>
-
